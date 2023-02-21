@@ -35,7 +35,8 @@ module Datadog
               tracing_context[:dd_request_span] = span
 
               # We want the route to show up as the trace's resource
-              trace.resource = span.resource
+              trace.resource = span.resource unless trace.resource_override?
+
 
               span.set_tag(Tracing::Metadata::Ext::TAG_COMPONENT, Ext::TAG_COMPONENT)
               span.set_tag(Tracing::Metadata::Ext::TAG_OPERATION, Ext::TAG_OPERATION_CONTROLLER)
@@ -54,7 +55,7 @@ module Datadog
 
               begin
                 # We repeat this in both start and at finish because the resource may have changed during the request
-                trace.resource = span.resource
+                trace.resource = span.resource unless trace.resource_override?
 
                 # Set analytics sample rate
                 Utils.set_analytics_sample_rate(span)
